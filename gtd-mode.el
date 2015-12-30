@@ -98,7 +98,7 @@
 	(format "%s.log" (buffer-file-name)))
 
 (defun gtd-log-item (n)
-	(interactive "nHow much hour the task took? (ex. 1.5) : ")
+	(interactive "nWorking hours (ex. 1.5) : ")
 	(save-excursion
 		(let* ((bol (line-beginning-position))
 					 (eol (line-end-position))
