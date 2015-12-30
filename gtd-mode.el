@@ -5,7 +5,7 @@
 ;; Author: kzak
 ;; URL: https://github.com/kazuakit/gtd-mode
 ;; Keywords: Getting Things Done
-;; Version: 0.0.1
+;; Version: 0.1.0
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -22,46 +22,121 @@
 
 ;;; Commentary:
 
-;; This package is a major mode for task management, Getting Things Done, on Emacs.
+;; This package is a major mode for Getting Things Done on Emacs.
 
 ;;; Code:
+(require 'cl-lib)
+(require 'gtd-log-mode)
 
 ;;; Variables
-(defvar item-opened "□")
+(defcustom gtd-prefix-todo
+	"□"
+	"String to indicate an opened item (= a task to do)"
+	:type 'string
+	:group 'gtd-mode)
 
-(defvar item-closed "■")
+(defcustom gtd-prefix-done
+	"■"
+	"String to indicate a closed item (= a task done)"
+	:type 'string
+	:group 'gtd-mode)
 
-(defvar item-regexp
-	(format
-	 "^\\([ \\|　\\|	]*\\)[%s\\|%s]?"
-	 item-opened item-closed))
+(defcustom gtd-prefix-title1
+	"#"
+	"String to indicate title1 (= 1 means top-level)"
+	:type 'string
+	:group 'gtd-mode)
+
+(defvar gtd-regexp-title1
+	(format "^[\s\t]*%s[\s\t]*\\(.+\\)$" gtd-prefix-title1)
+	"Regexp to determin a line of title")
+
+(defcustom gtd-prefix-title2
+	"##"
+	"String to indicate title1 (= 1 means top-level)"
+	:type 'string
+	:group 'gtd-mode)
+
+(defvar gtd-regexp-title2
+	(format "^[\s\t]*%s[\s\t]*\\(.+\\)$" gtd-prefix-title1)
+	"Regexp to determin a line of title")
+
+(defvar gtd-regexp-itemize-target
+	(format "^\\([\s\t]*\\)[%s%s]?" gtd-prefix-todo gtd-prefix-done))
+
+(defvar gtd-regexp-log-target
+	(format "^[\s\t]*%s\\(.+\\)?" gtd-prefix-done))
 
 ;;; Functions / Commands
-(defun make-item (beg-of-item)
+(defun gtd-make-item (prefix)
 	(interactive)
 	(save-excursion
 		(if (use-region-p)
-				(make-item-on-region
-				 (region-beginning) (line-end-position) beg-of-item)
-			(make-item-on-region
-			 (line-beginning-position) (line-end-position) beg-of-item))))
+				(gtd-make-item-on-region
+				 (region-beginning) (line-end-position) prefix)
+			(gtd-make-item-on-region
+			 (line-beginning-position) (line-end-position) prefix))))
 
-(defun make-item-on-region (beg end beg-of-item)
+(defun gtd-make-item-on-region (beg end prefix)
 	(interactive)
 	(save-excursion
 		(goto-char beg)
 		(beginning-of-line)
 		(while (and (< (point) end)
-								(re-search-forward item-regexp end t))
-			(replace-match (format "\\1%s" beg-of-item)))))
+								(re-search-forward gtd-regexp-itemize-target end t))
+			(replace-match (format "\\1%s" prefix)))))
 
-(defun open-item ()
+(defun gtd-open-item ()
 	(interactive)
-	(make-item item-opened))
+	(gtd-make-item gtd-prefix-todo))
 
-(defun close-item ()
+(defun gtd-close-item ()
 	(interactive)
-	(make-item item-closed))
+	(gtd-make-item gtd-prefix-done))
+
+(defun gtd-log-file-name()
+	(format "%s.log" (buffer-file-name)))
+
+(defun gtd-log-item (n)
+	(interactive "nHow much hour the task took? (ex. 1.5) : ")
+	(save-excursion
+		(let* ((bol (line-beginning-position))
+					 (eol (line-end-position))
+					 (line (buffer-substring-no-properties bol eol)))
+			(if (string-match gtd-prefix-done line)
+					(progn
+						(gtd-write-file (gtd-make-log-msg line n) (gtd-log-file-name))
+						(message (format "Logged in %s" (gtd-log-file-name)))
+						(beginning-of-line)
+						(kill-line))
+				(message (format "'%s' isn't closed item. cannnot logged." line))))))
+
+(defun gtd-make-log-msg (line time)
+	(let ((t1 (gtd-get-title-string gtd-regexp-title1))
+				(t2 (gtd-get-title-string gtd-regexp-title2)))
+		(string-match gtd-regexp-log-target line)
+		(format "%s,%s,%s,%s,%s\n"
+						(format-time-string "%Y,%m,%d")
+						time												; time spend
+						t1													; title
+						t2													; sub-title
+						(match-string 1 line))))		; description
+
+(defun gtd-write-file (s file-name)
+  (with-temp-buffer
+    (insert s)
+    (write-region (point-min) (point-max) file-name t)))
+
+(defun gtd-find-log-file ()
+	(interactive)
+	(find-file (gtd-log-file-name))
+	(gtd-log-mode))
+
+(defun gtd-get-title-string (regexp-title)
+	(interactive)
+	(save-excursion
+		(if (re-search-backward regexp-title nil t)
+				(match-string 1))))
 
 ;;; Hook
 (defvar gtd-mode-hook nil)
@@ -69,8 +144,10 @@
 ;;; Keymap
 (defvar gtd-mode-map
 	(let ((map (make-sparse-keymap)))
-		(define-key map (kbd "C-c o") 'open-item)
-		(define-key map (kbd "C-c c") 'close-item)
+		(define-key map (kbd "C-c o") 'gtd-open-item)
+		(define-key map (kbd "C-c c") 'gtd-close-item)
+		(define-key map (kbd "C-c l") 'gtd-log-item)
+		(define-key map (kbd "C-c f") 'gtd-find-log-file)
 		(define-key map (kbd "TAB") 'tab-to-tab-stop)
 		map)
 	"Keymap for GTD major mode")
@@ -88,11 +165,11 @@
 	(interactive)
 	(let ((indent-prev 0)
 				(indent-cur (current-indentation)))
-		
+
 		(save-excursion
 			(forward-line -1)
 			(setq indent-prev (current-indentation)))
-		
+
 		(when (< indent-cur indent-prev)
 			(indent-line-to indent-prev))))
 
