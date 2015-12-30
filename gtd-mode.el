@@ -48,7 +48,7 @@
 	:group 'gtd-mode)
 
 (defvar gtd-regexp-title1
-	(format "^[\s\t]*%s[\s\t]*\\(.+\\)$" gtd-prefix-title1)
+	(format "^[\s\t]*%s[\s\t]+\\(.+\\)$" gtd-prefix-title1)
 	"Regexp to determin a line of title")
 
 (defcustom gtd-prefix-title2
@@ -58,7 +58,7 @@
 	:group 'gtd-mode)
 
 (defvar gtd-regexp-title2
-	(format "^[\s\t]*%s[\s\t]*\\(.+\\)$" gtd-prefix-title1)
+	(format "^[\s\t]*%s[\s\t]+\\(.+\\)$" gtd-prefix-title2)
 	"Regexp to determin a line of title")
 
 (defvar gtd-regexp-itemize-target
