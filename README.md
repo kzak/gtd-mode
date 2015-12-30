@@ -1,31 +1,43 @@
 # gtd-mode
 
 This program is major mode for Emacs.
-Provided very simple Getting Things Done todo management.
+ToDo management in Getting Things Done paradime is provided.
 
 ## Installation
 
 Download this package and deploy to the Emacs's load-path.
 
 ```
+cd ~/.emacs.d
 git clone https://github.com/kazuakit/gtd-mode.git
-cd gtd-mode
-cp gtd-mode.el /path/to/elisp-load-path
 ```
 
-And configure your init.el like below.
+Add lines below in ~/.emacs.d/init.el.
 
-```elisp
-(require 'gtd-mode)
+```
+(add-to-list 'load-path "~/.emacs.d/gtd-mode")
 (add-to-list 'auto-mode-alist '("\\.todo$"  . gtd-mode))
+(require 'gtd-mode)
 ```
 
 ## Keybinds
 
-| Key   | Command    | Description                                           |
-| ----- | ---------- | ----------------------------------------------------- |
-| C-c o | open-item  | Itemize current line (Insert □ in beginning of line) |
-| C-c c | close-item | Close item (flip □ to ■)                            |
+### In gtd-mode.
+
+| Key   | Command           | Description                                           |
+| ----- | ----------------- | ----------------------------------------------------- |
+| C-c o | gtd-open-item  		| Itemize current line (or region).											|
+| C-c c | gtd-close-item 		| Close item of current line (or region).								|
+| C-c l | gtd-log-item 			| Write log of current line.    												|
+| C-c c | gtd-find-log-file | Open the log file in gtd-log-mode.								 		|
+
+### In gtd-log-mode.
+
+| Key   | Command              | Description                                           |
+| ----- | -------------------- | ----------------------------------------------------- |
+| s 		| gtd-log-summary  		 | Show log summary																			 |
+| q 		| gtd-log-kill-buffer  | Close the buffer of log file.												 |
+
 
 ## Screen Capture
 
