@@ -54,7 +54,7 @@
 			(insert (gtd-log-hr fmt-params))
 
 			;; insert bodies of summary table
-			(dolist (summary-line summary-lines)
+			(dolist (summary-line sorted-summary-lines)
 				(insert summary-line))
 			(insert (gtd-log-hr fmt-params))
 
@@ -139,7 +139,7 @@
 
 (defun gtd-log-table-header (fmt-params)
 	(format (gtd-log-fmt-header fmt-params)
-					"Title::SubTitle" "hr" "%"))
+					"task" "hr" "%"))
 
 (defun gtd-log-hr (fmt-params)
 	(format (gtd-log-fmt-header fmt-params)
