@@ -1,7 +1,7 @@
 # gtd-mode
 
-This program is major mode for Emacs.
-ToDo management in Getting Things Done paradime is provided.
+This program is a major mode for Emacs.
+To-do management in Getting Things Done paradigm is provided.
 
 ## Installation
 
@@ -12,7 +12,7 @@ cd ~/.emacs.d
 git clone https://github.com/kazuakit/gtd-mode.git
 ```
 
-Add lines below in ~/.emacs.d/init.el.
+Add the lines below in ~/.emacs.d/init.el.
 
 ```
 (add-to-list 'load-path "~/.emacs.d/gtd-mode")
@@ -41,6 +41,6 @@ Add lines below in ~/.emacs.d/init.el.
 
 ## Screen Capture
 
-Assumed that editting the text file, named filename.todo.
+Assumed that editing the text file, named filename.todo.
 
 ![Screen Capture](https://raw.githubusercontent.com/kazuakit/gtd-mode/master/docs/gtd-mode.gif)
