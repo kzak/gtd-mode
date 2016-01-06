@@ -5,7 +5,7 @@
 ;; Author: kzak
 ;; URL: https://github.com/kazuakit/gtd-mode
 ;; Keywords: Getting Things Done
-;; Version: 0.1.0
+;; Version: 0.2.0
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -39,6 +39,12 @@
 (defcustom gtd-prefix-done
   "■"
   "String to indicate a closed item (= a task done)"
+  :type 'string
+  :group 'gtd-mode)
+
+(defcustom gtd-postfix-important
+  "★"
+  "String to indicate an important item"
   :type 'string
   :group 'gtd-mode)
 
@@ -148,6 +154,12 @@
         (hide-subtree)
       (show-subtree))))
 
+(defun gtd-mark-as-important ()
+  (interactive)
+  (save-excursion
+    (end-of-line)
+    (insert (format " %s" gtd-postfix-important))))
+
 ;;; Hook
 (defvar gtd-mode-hook nil)
 
@@ -158,6 +170,7 @@
     (define-key map (kbd "C-c c") 'gtd-close-item)
     (define-key map (kbd "C-c l") 'gtd-log-item)
     (define-key map (kbd "C-c f") 'gtd-find-log-file)
+    (define-key map (kbd "C-c m") 'gtd-mark-as-important)
     (define-key map (kbd "C-t") 'gtd-outline-toggle-subtree)
     (define-key map (kbd "TAB") 'tab-to-tab-stop)
     map)
@@ -168,7 +181,8 @@
 (defvar gtd-font-lock-keywords
   '(("^[\s\t]*##.*$" . font-lock-keyword-face)
     ("^[\s\t]*#.*$" . font-lock-builtin-face)
-    ("^[\s\t]*■.*$" . font-lock-comment-face)))
+    ("^[\s\t]*■.*$" . font-lock-comment-face)
+    ("^.*★.*$" . font-lock-warning-face)))
 
 ;;; Indentation
 ;; http://www.pement.org/emacs_tabs.htm
