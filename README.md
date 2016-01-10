@@ -22,19 +22,13 @@ Add the lines below in ~/.emacs.d/init.el.
 
 ## Keybinds
 
-### In gtd-mode.
-
-| Key   | Command           | Description                                           |
-| ----- | ----------------- | ----------------------------------------------------- |
-| C-c o | gtd-open-item     | Itemize current line (or region).                     |
-| C-c c | gtd-close-item    | Close item of current line (or region).               |
-| C-c l | gtd-log-item      | Write log of current line.                            |
-| C-c f | gtd-find-log-file | Open the log file in gtd-log-mode.                    |
-
-### In gtd-log-mode.
 
 | Key   | Command              | Description                                           |
 | ----- | -------------------- | ----------------------------------------------------- |
+| C-c o | gtd-open-item        | Itemize current line (or region).                     |
+| C-c c | gtd-close-item       | Close item of current line (or region).               |
+| C-c l | gtd-log-item         | Write log of current line.                            |
+| C-c f | gtd-find-log-file    | Open the log file in gtd-log-mode.                    |
 | C-c s | gtd-log-summary      | Show log summary                                      |
 | C-c q | gtd-log-kill-buffer  | Close the buffer of log file.                         |
 
