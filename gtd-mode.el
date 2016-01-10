@@ -160,6 +160,15 @@
     (end-of-line)
     (insert (format " %s" gtd-postfix-important))))
 
+(defun gtd-regexp-start-with (str)
+  (format "^[\s\t]*%s.*$" str))
+
+(defun gtd-regexp-included (str)
+  (format "^.*%s.*$" str))
+
+(defun gtd-regexp-surrounded (str)
+  (format "%s[^%s]+\\%s" str str str))
+
 ;;; Hook
 (defvar gtd-mode-hook nil)
 
@@ -179,10 +188,12 @@
 ;;; Face
 ;; M-x list-faces-display
 (defvar gtd-font-lock-keywords
-  '(("^[\s\t]*##.*$" . font-lock-keyword-face)
-    ("^[\s\t]*#.*$" . font-lock-builtin-face)
-    ("^[\s\t]*■.*$" . font-lock-comment-face)
-    ("^.*★.*$" . font-lock-warning-face)))
+  (list
+   (cons (gtd-regexp-start-with gtd-prefix-title2) font-lock-keyword-face)
+   (cons (gtd-regexp-start-with gtd-prefix-title1) font-lock-builtin-face)
+   (cons (gtd-regexp-start-with gtd-prefix-done) font-lock-comment-face)
+   (cons (gtd-regexp-included gtd-postfix-important) font-lock-warning-face)
+   (cons (gtd-regexp-surrounded "*") font-lock-warning-face)))
 
 ;;; Indentation
 ;; http://www.pement.org/emacs_tabs.htm
